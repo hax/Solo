@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<head>
+<title>Test</title>
+
+<script>
+const FM1Q84 = '1q84.fm player'
+const PlayerID = Math.random().toString(16).slice(2) // generate a unique id for each player instance
+console.debug('', PlayerID)
+
+window.addEventListener('pageshow', function () {
+	
+	var audio = document.getElementById('testAudio')
+	if (!audio) return
+	
+	audio.addEventListener('play', function () {
+		if (localStorage[FM1Q84] != PlayerID) localStorage[FM1Q84] = PlayerID
+	}, false)
+	
+	audio.addEventListener('pause', function () {
+		if (localStorage[FM1Q84] == PlayerID) localStorage[FM1Q84] = null
+	}, false)
+	
+	
+	if (!localStorage[FM1Q84]) {
+		audio.play()
+	} else {
+		audio.pause()
+	}
+	window.addEventListener('storage', function (evt) {
+		if (evt.key == FM1Q84) {
+			if (evt.newValue != PlayerID) {
+				console.debug('Other player', evt.oldValue, 'start playing, pause me')
+				audio.pause()
+			}
+		}
+	}, false)
+
+}, false)
+
+window.addEventListener('pagehide', function () {
+}, false)
+
+</script>
+
+</head>
+
+<body>
+	<a href="test1.html">test1</a>
+	<a href="test2.html">test2</a>
+	<audio controls id="testAudio">
+		<source src="music/artgirl_party.ogg">
+		<source src="music/artgirl_party.mp3">
+	</audio>
+</body>
