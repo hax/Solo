@@ -1,28 +1,28 @@
 new function () {
-
-	const SOLO = 'Solo player'
+    
+    const SOLO = 'Solo player'
 	
-	console.debug('Current playing av', localStorage[SOLO])
-	
-	const pageId = Math.random().toString(36).slice(2, 8)
+    const pageId = generateId()
 	console.debug('generate page id:', pageId)
 
-	window.addEventListener('play', function (evt) {
-		var av = evt.target
-		if (av.id && av.hasAttribute('solo')) {
-			localStorage[SOLO] = pageId + ':' + av.id
-		}
-	}, true)
+	console.debug('Current playing av:', localStorage[SOLO])
 	
-	window.addEventListener('pause', function (evt) {
-		var av = evt.target
-		if (localStorage[SOLO] == av.id) {
-			localStorage[SOLO] = null
+	window.addEventListener('play', playOrPause, true)
+	window.addEventListener('pause', playOrPause, true)
+    
+    function playOrPause(evt) {
+    	var av = evt.target
+		if (av.id && av.hasAttribute('solo')) {
+            var id = pageId + ':' + av.id
+            if (evt.type == 'play')
+			    localStorage[SOLO] = id
+            else if (localStorage[SOLO] == id)
+                localStorage[SOLO] = ''
 		}
-	}, true)
+	}
 	
 	window.addEventListener('storage', function (evt) {
-		if (evt.key == SOLO && evt.oldValue.indexOf(pageId) == 0) {
+		if (evt.key == SOLO && evt.oldValue.indexOf(pageId + ':') == 0) {
 			var avId = evt.oldValue.slice(pageId.length + 1)
 			var av = document.getElementById(avId)
 			if (av) {
@@ -30,12 +30,16 @@ new function () {
 				av.pause()
 			}
 		}
-	}, false)
+	}, true)
 
 	/*window.addEventListener('pagehide', function () {
 		var avs = document.querySelectorAll('audio, video')
 		for (var i = 0; i < avs.length; i++)
 			avs[i].pause()
 	}, false)*/
+    
+    function generateId() {
+        return Math.random().toString(36).slice(2, 8)
+    }
 
 }
