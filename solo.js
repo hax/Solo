@@ -1,8 +1,10 @@
 new function () {
-    
-    const SOLO = 'Solo player'
+
+	const SOLO = 'Solo player'
 	
-    const pageId = generateId()
+	console.debug('current playing media:', localStorage[SOLO])
+	
+	const pageId = generateId()
 	console.debug('generate page id:', pageId)
 
 	console.debug('Current playing av:', localStorage[SOLO])
@@ -26,7 +28,7 @@ new function () {
 			var avId = evt.oldValue.slice(pageId.length + 1)
 			var av = document.getElementById(avId)
 			if (av) {
-				console.debug('Other player', evt.newValue, 'start playing, pause me')
+				console.debug('other player', evt.newValue, 'start playing, pause me')
 				av.pause()
 			}
 		}
@@ -41,5 +43,4 @@ new function () {
     function generateId() {
         return Math.random().toString(36).slice(2, 8)
     }
-
 }
