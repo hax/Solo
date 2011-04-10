@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<title>Test Media Element (Audio/Video)</title>
+<script src="mediaelement/mediaelement.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	initMediaElements(document.getElementsByTagName('audio'))
+	initMediaElements(document.getElementsByTagName('video'))
+	function initMediaElements(list) {
+		for (var i = 0, n = list.length; i < n; i++)
+			MediaElement(list[i])
+	}
+}, false)
+
+window.addEventListener('play', onMediaPlay, true)
+window.addEventListener('pause', onMediaPause, true)
+
+function onMediaPlay(evt) {
+	console.log(evt)
+}
+
+function onMediaPause(evt) {
+	console.log(evt)
+}
+
+</script>
+</head>
+<body>
+
+	<audio id="test">
+		<source src="music/hongkong.erge.mp3">
+		<source src="music/hongkong.erge.ogg">
+	</audio>
+	<p>
+	<input type="button" value="play" onclick="MediaElement('test').play()">
+	<input type="button" value="pause" onclick="MediaElement('test').pause()">
+
+</body>
+</html>
