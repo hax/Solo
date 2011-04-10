@@ -1,6 +1,6 @@
 new function () {
 
-	const SOLO = 'Solo-player'
+	var SOLO = 'http://solo.test/solo.html'
 	
 	//console.debug('current playing media:', localStorage[SOLO])
 	
@@ -10,45 +10,49 @@ new function () {
 	window.addEventListener('play', playOrPause, true)
 	window.addEventListener('pause', playOrPause, true)
 	
-	function playOrPause(evt) {
-		var media = evt.target
-		var value = pageId + ':' + media.id
-		//console.debug(evt.type, value)
-		if (media.id && media.hasAttribute('solo')) {
-			if (evt.type == 'play') {
-				localStorage.setItem(SOLO, value + ':' + evt.timeStamp)
-			} else if (localStorage.getItem(SOLO).indexOf(value) == 0) {
-				localStorage.setItem(SOLO, '::' + evt.timeStamp)
-			}
-			//console.debug('set localstorage:', localStorage.getItem(SOLO))
-		}
+	document.addEventListener('DOMContentLoaded', addSoloIFrame, false)
+    
+    function addSoloIFrame() {
+        var iframe = document.createElement('iframe')
+		iframe.id = SOLO
+        iframe.src = SOLO
+        document.body.appendChild(iframe)
+		iframe.style.position = 'absolute'
+		iframe.width = iframe.height = iframe.frameBorder = 
+		iframe.style.left = iframe.style.right = iframe.style.top = iframe.style.bottom = 0
+		iframe.style.visibility = 'hidden'
+    }
+	
+	function soloChannel() {
+		var solo = document.getElementById(SOLO)
+		return solo ? solo.contentWindow : null
 	}
 	
-	window.addEventListener('storage', function (evt) {
-		//console.log(evt.key, ':', evt.oldValue, '->', evt.newValue)
-		if (evt.key == SOLO && evt.oldValue && evt.oldValue.indexOf(pageId + ':') == 0) {
-			var media = document.getElementById(evt.oldValue.split(':')[1])
-			if (media) {
-				//console.debug('other player', evt.newValue, 'start playing, pause me')
-				media.pause()
+	function playOrPause(evt) {
+		var media = evt.target
+		if (media.id && media.hasAttribute('solo'))
+			soloChannel().postMessage([evt.type, pageId, media.id].join(':'), '*')
+	}
+	
+	window.addEventListener('message', function (evt) {
+		//console.log(evt.data)
+		if (evt.source == soloChannel()) {
+			var args = evt.data.split(':')
+			if (args[0] == 'pause' && args[1] == pageId) {
+				var media = document.getElementById(args[2])
+				if (media && media.hasAttribute('solo')) media.pause()
 			}
 		}
 	}, false)
 
-	window.addEventListener('pagehide', function () {
+	/*window.addEventListener('pagehide', function () {
 		var avs = document.querySelectorAll('audio, video')
 		for (var i = 0; i < avs.length; i++)
 			avs[i].pause()
-	}, false)
+	}, false)*/
 
 	function generateId() {
 		return Math.random().toString(36).slice(2, 8)
 	}
-   document.addEventListener('DOMContentLoaded', addSoloIFrame, false)
-    
-    function addSoloIFrame() {
-        var iframe = document.createElement('iframe')
-        iframe.src = 'solo.html'
-        document.body.appendChild(iframe)
-    }
+	
 }

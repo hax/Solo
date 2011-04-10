@@ -2,16 +2,16 @@
 <html>
 <head>
 <title>Test localStorage/sessionStorage</title>
+<script src="../homemade-html5/src/utils.js"></script>
 <script>
 function updateStorage() {
 	var test = document.getElementById('test')
 	localStorage.test = test.value
 }
-window.onload = function () {
-	console.debug('load')
-	window.addEventListener('storage', function (evt) {
-		console.debug(evt)
-	}, true)
+onload = function () {
+	//console.debug('load')
+}
+onstorage = function (evt) {
 }
 </script>
 </head>

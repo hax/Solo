@@ -1,0 +1,20 @@
+<!doctype html>
+<head>
+<script>
+const SOLO = 'Solo-player'
+onmessage = function (evt) {
+	console.debug(evt.data)
+	var args = evt.data.split(':')
+	if (args[0] == 'play')	localStorage[SOLO] = args[1] + ':' + args[2]
+	else if (args[0] == 'pause' && localStorage[SOLO] == args[1] + ':' + args[2]) localStorage[SOLO] = ''
+	console.debug(localStorage[SOLO])
+}
+onstorage = function (evt) {
+	console.debug(evt.key, evt.oldValue, '->', evt.newValue)
+	if (evt.key == SOLO) parent.postMessage('pause:' + evt.oldValue, '*')
+}
+</script>
+</head>
+<body>
+Solo bridge
+</body>
